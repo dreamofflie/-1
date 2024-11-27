@@ -1,26 +1,32 @@
-# TODO решите задачу
 
+
+import csv
 import json
 
-def calculate_score_sum(json_file_path):
-    # Читаем содержимое JSON файла
-    with open(json_file_path, 'r') as file:
-        data = json.load(file)
+def csv_to_json(csv_file_path, delimiter=",", line_terminator="\n"):
 
-    # Инициализируем сумму
-    total_sum = 0.0
+    try:
+        with open(csv_file_path, 'r', encoding='utf-8') as csvfile:  # Открываем файл, указываем кодировку
+            reader = csv.DictReader(csvfile, delimiter=delimiter)  # Используем DictReader для словарей
 
-    # Обрабатываем каждый словарь в списке
-    for item in data:
-        score = item.get("score", 0)
-        weight = item.get("weight", 0)
-        total_sum += score * weight
+            # Читаем все строки CSV.
+            data = list(reader)
 
-    # Возвращаем результат, округленный до 3 знаков после запятой
-    return round(total_sum, 3)
+        # Преобразуем в JSON строку с отступами
+        json_string = json.dumps(data, indent=4)
+        return json_string
 
-# Вызов функции
-if __name__ == "__main__":
-    json_file_path = 'input.json'  # Укажите путь к вашему JSON файлу
-    result = calculate_score_sum(json_file_path)
-    print(result)
+    except FileNotFoundError:
+        print(f"Ошибка: файл '{csv_file_path}' не найден.")
+        return None
+    except Exception as e:  #Обработка других возможных исключений
+        print(f"Произошла ошибка: {e}")
+        return None
+
+
+# Пример использования:
+csv_filepath = "input.csv"  # Замените на путь к вашему CSV файлу
+json_output = csv_to_json(csv_filepath)
+
+if json_output:
+    print(json_output)
